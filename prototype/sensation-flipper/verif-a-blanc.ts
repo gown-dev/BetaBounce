@@ -9,6 +9,7 @@ import {
   anglesBatteur,
   impulsionLanceur,
   livrer,
+  HAUTEUR,
   type Reglages,
 } from './src/socle.ts';
 import { creerMonde } from './src/monde.ts';
@@ -51,6 +52,7 @@ function jouer(r: Reglages, battre: boolean): Resultat {
 
   let angleG = a.gaucheRepos;
   let angleD = a.droitRepos;
+  const frappe = [-1, -1]; // temps restant de la frappe en cours, par batteur
   let t = 0;
   const res: Resultat = {
     sortiLanceur: false,
@@ -65,11 +67,26 @@ function jouer(r: Reglages, battre: boolean): Resultat {
 
   while (t < LIMITE) {
     if (battre) {
-      // Battement aveugle : monté 0,10 s, baissé 0,15 s. Un vrai joueur fera mieux ;
-      // ce qu'on mesure ici, c'est seulement que le batteur *touche* la balle.
-      const phase = t % 0.25;
-      const cibleG = phase < 0.1 ? a.gaucheHaut : a.gaucheRepos;
-      const cibleD = phase < 0.1 ? a.droitHaut : a.droitRepos;
+      // Joueur automatique : lève le batteur quand la balle descend à sa portée. Un
+      // battement aveugle au rythme fixe ne mesurait que des coïncidences — il changeait
+      // du tout au tout au moindre décalage de géométrie.
+      // Le joueur *tape* : il ne maintient pas le batteur levé. Maintenu, le batteur est
+      // immobile quand la balle arrive, ne lui transmet rien, et la balle roule bêtement
+      // vers le pivot — c'est ce qui faisait mentir la mesure.
+      const p0 = balle.translation();
+      const v0 = balle.linvel();
+      const tape = (i: number, pivot: [number, number]) => {
+        frappe[i] -= PAS;
+        if (
+          frappe[i] < -0.12 &&
+          v0.y < 0 &&
+          Math.hypot(p0.x - pivot[0], p0.y - pivot[1]) < r.longueurBatteur * 0.75
+        )
+          frappe[i] = 0.09;
+        return frappe[i] > 0;
+      };
+      const cibleG = tape(0, socle.pivotGauche) ? a.gaucheHaut : a.gaucheRepos;
+      const cibleD = tape(1, socle.pivotDroit) ? a.droitHaut : a.droitRepos;
       const max = r.vitesseBatteur * PAS;
       angleG += Math.max(-max, Math.min(max, cibleG - angleG));
       angleD += Math.max(-max, Math.min(max, cibleD - angleD));
@@ -93,7 +110,8 @@ function jouer(r: Reglages, battre: boolean): Resultat {
     if (remonte && !montait && p.y < r.hauteurBatteurs + 0.1) res.contactsBatteur++;
     montait = remonte;
 
-    if (res.xMiTable < 0 && res.hauteurMax > 0.8 && p.y < 0.6) res.xMiTable = p.x;
+    if (res.xMiTable < 0 && res.hauteurMax > 0.8 * HAUTEUR && p.y < 0.55 * HAUTEUR)
+      res.xMiTable = p.x;
     if (trace && Math.round(t / PAS) % 12 === 0 && t < 4)
       console.log(`    t=${t.toFixed(2)}  x=${p.x.toFixed(3)}  y=${p.y.toFixed(3)}  v=(${v.x.toFixed(2)}, ${v.y.toFixed(2)})`);
     res.fin = [p.x, p.y];

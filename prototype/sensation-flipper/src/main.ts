@@ -40,7 +40,19 @@ const BALLES_PAR_PARTIE = 3;
 
 const canvas = document.getElementById('table') as HTMLCanvasElement;
 const ctx = canvas.getContext('2d')!;
-const echelle = canvas.height / HAUTEUR;
+let echelle = 1;
+
+// Le plateau se taille sur la fenêtre : la hauteur disponible commande, la largeur suit
+// le rapport du plateau. Sans ça, il déborde en bas et on joue avec le drain hors champ.
+function redimensionner() {
+  const dispo = Math.max(420, Math.min(window.innerHeight - 120, 1000));
+  canvas.height = Math.round(dispo);
+  canvas.width = Math.round((dispo * LARGEUR) / HAUTEUR);
+  echelle = canvas.height / HAUTEUR;
+}
+
+redimensionner();
+addEventListener('resize', redimensionner);
 
 // ---------------------------------------------------------------- état de la partie
 

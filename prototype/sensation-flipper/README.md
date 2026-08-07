@@ -10,6 +10,13 @@ npm run dev      # puis ouvrir l'URL affichée
 npm run verif    # contrôle à blanc sous Node : les trois socles se montent-ils ?
 ```
 
+## Proportions du plateau
+
+**60 × 92 cm**, contre 52 × 116 cm sur une vraie machine. Le plateau réel est trop haut
+pour tenir sur un écran 1080p à côté du panneau de réglages. Ce n'est pas qu'un choix
+d'affichage : la balle tombe de moins haut et dispose de plus de largeur, donc la
+sensation change avec. Le canvas se taille ensuite sur la fenêtre, hauteur d'abord.
+
 ## Ce qu'il répond
 
 - La gravité, la restitution et la vitesse de la balle donnent-elles une sensation juste ?

@@ -43,8 +43,12 @@ export type Reglages = {
   forceKickback: number; // vitesse de renvoi, en m/s
 };
 
-export const LARGEUR = 0.52;
-export const HAUTEUR = 1.1;
+// Un vrai plateau fait 52 × 116 cm, soit un rapport de 0,45 — trop haut pour tenir sur un
+// écran 1080p à côté du panneau de réglages. On élargit et on raccourcit : 60 × 92 cm.
+// Ce n'est pas un choix d'affichage, c'est un choix de plateau — la balle tombe de moins
+// haut et dispose de plus de largeur, donc la sensation change avec.
+export const LARGEUR = 0.6;
+export const HAUTEUR = 0.92;
 export const LARGEUR_LANCEUR = 0.036;
 
 export type Polyligne = [number, number][];
@@ -164,10 +168,13 @@ export function construireSocle(r: Reglages): Socle {
   // balle vers un drain, faute de quoi que ce soit à toucher en haut. Trois bumpers
   // suffisent à casser les trajectoires et à rendre la durée d'une partie mesurable.
   if (r.garnissage) {
+    // Écartement proportionnel à la largeur jouable, pour que le triangle reste centré
+    // et lisible quelles que soient les proportions du plateau.
+    const e = 0.16 * (xR - xL);
     bumpers.push(
-      { x: cx - 0.075, y: 0.70 * H, r: 0.022 },
-      { x: cx + 0.075, y: 0.70 * H, r: 0.022 },
-      { x: cx, y: 0.78 * H, r: 0.022 },
+      { x: cx - e, y: 0.7 * H, r: 0.022 },
+      { x: cx + e, y: 0.7 * H, r: 0.022 },
+      { x: cx, y: 0.79 * H, r: 0.022 },
     );
   }
 
