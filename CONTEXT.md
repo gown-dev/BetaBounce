@@ -67,6 +67,10 @@ Une modification d'ampleur et de durée fixées, portant sur l'une des quatre gr
 La palette qui renvoie la balle. Deux par plateau, de géométrie identique sur toutes les cases et pour tous les joueurs.
 _Éviter_ : flipper (désigne aussi la machine), raquette, palette
 
+**indulgence** :
+L'écart entre le batteur dessiné et le batteur qui touche. La balle est frappée alors qu'elle passe un peu à côté de ce que le joueur voit. Deux marges distinctes : au ras du batteur, et après la pointe. Bornée — l'écart réel entre les deux batteurs laisse toujours passer une balle.
+_Éviter_ : coyote, tolérance, assistance
+
 **balle** :
 Le projectile. Porteuse des sceaux du joueur.
 _Éviter_ : bille
