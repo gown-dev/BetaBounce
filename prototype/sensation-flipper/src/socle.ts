@@ -21,10 +21,19 @@ export type Reglages = {
   angleHautDeg: number;
   vitesseBatteur: number; // rad/s
 
+  // Indulgence : le batteur physique est plus gros que le batteur dessiné. La balle est
+  // donc frappée alors qu'elle passe un peu à côté de ce que le joueur voit. Deux marges,
+  // parce que les deux ratés n'ont rien à voir : passer *au ras* du batteur, et passer
+  // *juste après la pointe*.
+  margeEpaisseur: number;
+  margeLongueur: number;
+
   largeurCouloir: number; // couloir de sortie
   hauteurPoteau: number;
   slingshots: boolean;
   poteauCentral: boolean;
+  garnissage: boolean; // quelques bumpers, pour que la balle ait quelque chose à faire
+  restitutionBumper: number;
 };
 
 export const LARGEUR = 0.52;
@@ -36,6 +45,7 @@ export type Polyligne = [number, number][];
 export type Socle = {
   murs: Polyligne[];
   poteaux: { x: number; y: number; r: number }[];
+  bumpers: { x: number; y: number; r: number }[];
   pivotGauche: [number, number];
   pivotDroit: [number, number];
   departBalle: [number, number];
@@ -71,11 +81,15 @@ export function construireSocle(r: Reglages): Socle {
     [LARGEUR, 0.86 * H],
     [LARGEUR, 0.012],
     [xR, 0.012],
-    [xR, 0.87 * H],
+    // Le séparateur monte jusqu'à croiser la voûte : le couloir de lancement est un
+    // cul-de-sac scellé, dont la seule sortie est la glissière filaire. Sans ça, une
+    // balle bien frappée y retombe et la partie ne finit jamais.
+    [xR, 0.99 * H],
   ];
 
   const murs: Polyligne[] = [contour];
   const poteaux: Socle['poteaux'] = [];
+  const bumpers: Socle['bumpers'] = [];
 
   const miroir = (p: Polyligne): Polyligne => p.map(([x, y]) => [2 * cx - x, y]);
 
@@ -116,9 +130,21 @@ export function construireSocle(r: Reglages): Socle {
     if (place > 0.002) poteaux.push({ x: cx, y: r.hauteurBatteurs - 0.014, r: Math.min(0.008, place) });
   }
 
+  // Garnissage minimal. Le socle nu a livré son verdict : la moindre frappe renvoie la
+  // balle vers un drain, faute de quoi que ce soit à toucher en haut. Trois bumpers
+  // suffisent à casser les trajectoires et à rendre la durée d'une partie mesurable.
+  if (r.garnissage) {
+    bumpers.push(
+      { x: cx - 0.075, y: 0.70 * H, r: 0.022 },
+      { x: cx + 0.075, y: 0.70 * H, r: 0.022 },
+      { x: cx, y: 0.78 * H, r: 0.022 },
+    );
+  }
+
   return {
     murs,
     poteaux,
+    bumpers,
     pivotGauche,
     pivotDroit,
     departBalle: [LARGEUR - LARGEUR_LANCEUR / 2, 0.032],
@@ -132,6 +158,19 @@ export function construireSocle(r: Reglages): Socle {
       0.86 * H,
     ],
     limiteLanceur: xR,
+  };
+}
+
+// L'indulgence a une limite dure : si les batteurs physiques se rejoignent, le drain se
+// referme et la partie ne peut plus finir. On rabote donc la marge de longueur pour que
+// l'écart réel laisse toujours passer une balle — le joueur peut tricher, pas gagner.
+export function margesEffectives(r: Reglages) {
+  const epaisseur = Math.max(0, r.margeEpaisseur);
+  const cos = Math.cos(rad(r.angleReposDeg));
+  const place = (r.ecartBatteurs - (2 * r.rayonBalle + 0.002)) / 2 - epaisseur;
+  return {
+    epaisseur,
+    longueur: Math.max(0, Math.min(r.margeLongueur, place / Math.max(0.2, cos))),
   };
 }
 

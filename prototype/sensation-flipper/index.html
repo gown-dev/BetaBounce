@@ -38,6 +38,9 @@
       .ball-chip { flex: 1; text-align: center; border: 1px solid var(--line); border-radius: 6px; padding: 6px 0; font-variant-numeric: tabular-nums; font-size: 12px; color: var(--dim); }
       .ball-chip.done { color: var(--text); border-color: var(--accent); }
       .ball-chip.live { color: var(--accent); border-color: var(--accent); }
+      .bascules { display: flex; flex-direction: column; gap: 5px; margin-bottom: 14px; padding-bottom: 12px; border-bottom: 1px solid var(--line); }
+      .bascules label { display: flex; align-items: center; gap: 7px; font-size: 12px; color: var(--text); cursor: pointer; }
+      .bascules input { accent-color: var(--accent); }
       label.slider { display: block; margin-bottom: 11px; }
       label.slider .lab { display: flex; justify-content: space-between; font-size: 12px; color: var(--dim); margin-bottom: 3px; }
       label.slider .lab b { color: var(--text); font-weight: 500; font-variant-numeric: tabular-nums; }
@@ -65,9 +68,11 @@
       <div class="panel">
         <h1>PROTOTYPE — la sensation du flipper</h1>
         <p class="note">
-          Socle nu : batteurs, murs, couloirs de sortie, drain, lanceur. Aucun module, aucun score.
-          Ce qu'il y a à juger : la gravité, la restitution, la vitesse de la balle, la longueur et la
-          position des batteurs — et surtout la <b>durée d'une partie à trois balles</b>. Code jetable.
+          Le socle — batteurs, murs, couloirs de sortie, drain, lanceur — plus trois bumpers, pour que
+          la balle ait quelque chose à toucher. Aucun score. Ce qu'il y a à juger : la gravité, la
+          restitution, la vitesse de la balle, la longueur et la position des batteurs, la
+          <b>marge d'indulgence</b> tracée en pointillé autour des batteurs, et surtout la
+          <b>durée d'une partie à trois balles</b>. Code jetable.
         </p>
       </div>
 

@@ -16,6 +16,7 @@ import {
   construireSocle,
   anglesBatteur,
   impulsionLanceur,
+  margesEffectives,
   livrer,
   HAUTEUR,
   LARGEUR,
@@ -272,6 +273,15 @@ function dessiner() {
     ctx.arc(X(p.x), Y(p.y), p.r * echelle, 0, Math.PI * 2);
     ctx.fill();
   }
+  for (const b of socle.bumpers) {
+    ctx.fillStyle = '#2b3a4a';
+    ctx.beginPath();
+    ctx.arc(X(b.x), Y(b.y), b.r * echelle, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.strokeStyle = '#4d6b86';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+  }
 
   dessinerBatteur(socle.pivotGauche, batteurs.gauche.angle);
   dessinerBatteur(socle.pivotDroit, batteurs.droit.angle);
@@ -327,6 +337,25 @@ function dessinerBatteur(pivot: [number, number], angle: number) {
   const [px, py] = pivot;
   const bx = px + Math.cos(angle) * reglages.longueurBatteur;
   const by = py + Math.sin(angle) * reglages.longueurBatteur;
+
+  // L'indulgence en pointillé : c'est la différence entre ce que le joueur voit et ce
+  // que le moteur touche. Elle doit être visible ici, sinon on règle à l'aveugle.
+  const marges = margesEffectives(reglages);
+  if (marges.epaisseur > 0 || marges.longueur > 0) {
+    const gx = px + Math.cos(angle) * (reglages.longueurBatteur + marges.longueur);
+    const gy = py + Math.sin(angle) * (reglages.longueurBatteur + marges.longueur);
+    ctx.save();
+    ctx.setLineDash([3, 4]);
+    ctx.strokeStyle = 'rgba(214,164,90,.35)';
+    ctx.lineWidth = (reglages.rayonBatteur + marges.epaisseur) * 2 * echelle;
+    ctx.lineCap = 'round';
+    ctx.beginPath();
+    ctx.moveTo(X(px), Y(py));
+    ctx.lineTo(X(gx), Y(gy));
+    ctx.stroke();
+    ctx.restore();
+  }
+
   ctx.strokeStyle = '#d6a45a';
   ctx.lineWidth = reglages.rayonBatteur * 2 * echelle;
   ctx.lineCap = 'round';
@@ -394,13 +423,39 @@ const CURSEURS: Curseur[] = [
   { cle: 'angleReposDeg', nom: 'Angle au repos', min: 8, max: 46, pas: 1, fmt: (v) => `${v}°` },
   { cle: 'angleHautDeg', nom: 'Angle relevé', min: 4, max: 46, pas: 1, fmt: (v) => `${v}°` },
   { cle: 'vitesseBatteur', nom: 'Vitesse des batteurs', min: 8, max: 60, pas: 1, fmt: (v) => `${v} rad/s` },
+  { cle: 'margeEpaisseur', nom: 'Indulgence — au ras du batteur', min: 0, max: 0.014, pas: 0.0005, fmt: mm },
+  { cle: 'margeLongueur', nom: 'Indulgence — après la pointe', min: 0, max: 0.035, pas: 0.0005, fmt: mm },
   { cle: 'largeurCouloir', nom: 'Largeur du couloir de sortie', min: 0.018, max: 0.08, pas: 0.001, fmt: mm },
+  { cle: 'restitutionBumper', nom: 'Restitution des bumpers', min: 0.3, max: 0.95, pas: 0.01, fmt: brut },
+];
+
+const BASCULES: { cle: keyof Reglages; nom: string }[] = [
+  { cle: 'garnissage', nom: 'Bumpers' },
+  { cle: 'slingshots', nom: 'Slingshots et couloirs' },
+  { cle: 'poteauCentral', nom: 'Poteau central' },
 ];
 
 const boite = document.getElementById('sliders')!;
 
 function construireCurseurs() {
   boite.innerHTML = '';
+
+  const bascules = document.createElement('div');
+  bascules.className = 'bascules';
+  for (const b of BASCULES) {
+    const label = document.createElement('label');
+    const input = document.createElement('input');
+    input.type = 'checkbox';
+    input.checked = reglages[b.cle] as boolean;
+    input.addEventListener('change', () => {
+      (reglages[b.cle] as boolean) = input.checked;
+      reconstruireSurPlace();
+    });
+    label.append(input, document.createTextNode(' ' + b.nom));
+    bascules.append(label);
+  }
+  boite.append(bascules);
+
   for (const c of CURSEURS) {
     const label = document.createElement('label');
     label.className = 'slider';

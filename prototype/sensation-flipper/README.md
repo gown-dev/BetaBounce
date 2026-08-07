@@ -14,17 +14,32 @@ npm run verif    # contrôle à blanc sous Node : les trois socles se montent-il
 
 - La gravité, la restitution et la vitesse de la balle donnent-elles une sensation juste ?
 - Où placer les batteurs, et de quelle longueur ?
+- **De combien le batteur physique doit-il déborder du batteur dessiné** pour que la
+  frappe soit agréable sans devenir une farce ?
 - **Combien de temps dure une partie à trois balles ?** C'est le chiffre qui décide du
   rythme du jeu entier : un déplacement sur la carte du donjon coûte cette durée-là.
 
+## L'indulgence
+
+Le batteur **physique** est plus gros que le batteur **dessiné** — deux marges réglables,
+tracées en pointillé autour de chaque batteur :
+
+- **au ras du batteur** (épaisseur) : rattrape la balle qui frôle sans toucher ;
+- **après la pointe** (longueur) : rattrape le raté classique, la balle passée d'un cheveu
+  au bout du batteur.
+
+Une borne dure : la marge de longueur est rabotée pour que l'écart réel entre les deux
+batteurs laisse toujours passer une balle. Le joueur peut tricher, pas gagner — sinon le
+drain se referme et la partie ne peut plus finir.
+
 ## Ce qu'il ne répond pas
 
-Le socle est **nu** — aucun module, aucun score. Le troisième point du ticket, « le seuil
-de score se lit-il comme un objectif ou comme une corvée », reste donc ouvert : il demande
-un plateau garni.
+Aucun score. Le troisième point du ticket, « le seuil de score se lit-il comme un objectif
+ou comme une corvée », reste donc ouvert.
 
-Et la durée mesurée ici est un **plancher**. Sur un plateau garni, les modules retiennent
-la balle ; une partie réelle durera plus longtemps que ce que ce socle nu affiche.
+Les trois bumpers ne sont **pas** un plateau garni : ce sont trois cercles rebondissants
+pour que la balle ait quelque chose à toucher. Rien à voir avec les **modules** du domaine
+(empreinte, récepteurs, résistance, activation, effet).
 
 ## Les trois socles
 
@@ -37,8 +52,9 @@ Ils diffèrent par leur structure, pas seulement par leurs nombres.
 | **B — Goulet** | ni couloir ni slingshot, murs qui plongent sur les batteurs, batteurs courts et écartés, pente forte (9°) |
 | **C — Entonnoir** | couloirs étroits, poteau central dans le drain, batteurs longs, pente douce (4,5°) |
 
-Les quatorze curseurs modifient le socle **en cours de balle** : le monde est rebâti à
-chaque cran, la balle gardant sa position et sa vitesse.
+Les curseurs et les cases à cocher modifient le socle **en cours de balle** : le monde est
+rebâti à chaque cran, la balle gardant sa position et sa vitesse. Les bumpers, les
+slingshots et le poteau central se retirent d'une case — le socle nu reste donc à un clic.
 
 ## Ce qui est simulé et ce qui ne l'est pas
 
@@ -55,6 +71,10 @@ redescende, et elle finit collée à un mur. Une glissière filaire dépose donc
 au-dessus du batteur gauche, presque immobile — c'est ce que fait un vrai retour de bille.
 La montée dans le couloir, elle, reste physique.
 
+Le couloir de lancement est par ailleurs un **cul-de-sac scellé** : son séparateur monte
+jusqu'à la voûte. Sans ça, une balle bien frappée y retombe et la partie ne finit jamais.
+
 **Un constat en soi** : cette dérive n'est pas un défaut du prototype, c'est une propriété
 du plateau. Sur un plateau garni, ce sont les modules qui interrompent les trajectoires.
-Un plateau trop vide donnera toujours des balles qui longent les murs.
+Un plateau trop vide donnera toujours des balles qui longent les murs — c'est ce que le
+premier essai, socle nu, a montré en une partie.

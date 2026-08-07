@@ -1,7 +1,7 @@
 // PROTOTYPE JETABLE — montage du monde Rapier. Aucun DOM ici, pour qu'un test à blanc
 // sous Node puisse monter le même plateau que la page.
 
-import { gravite, type Reglages, type Socle } from './socle.ts';
+import { gravite, margesEffectives, type Reglages, type Socle } from './socle.ts';
 
 export type Monde = {
   monde: any;
@@ -41,17 +41,31 @@ export function creerMonde(
     );
   }
 
+  for (const b of socle.bumpers) {
+    monde.createCollider(
+      RAPIER.ColliderDesc.ball(b.r)
+        .setTranslation(b.x, b.y)
+        .setRestitution(r.restitutionBumper)
+        .setFriction(r.frottement * 0.5),
+      decor,
+    );
+  }
+
+  // Le batteur physique est plus gros que le batteur dessiné : c'est là que vit toute
+  // l'indulgence. Le rendu, lui, dessine la taille nominale.
+  const marges = margesEffectives(r);
   const batteur = (pivot: [number, number], angle: number) => {
     const corps = monde.createRigidBody(
       RAPIER.RigidBodyDesc.kinematicPositionBased()
         .setTranslation(pivot[0], pivot[1])
         .setRotation(angle),
     );
-    const rr = r.rayonBatteur;
-    const demi = Math.max(0.001, (r.longueurBatteur - 2 * rr) / 2);
+    const rr = r.rayonBatteur + marges.epaisseur;
+    const longueur = r.longueurBatteur + marges.longueur;
+    const demi = Math.max(0.001, (longueur - 2 * rr) / 2);
     monde.createCollider(
       RAPIER.ColliderDesc.capsule(demi, rr)
-        .setTranslation(r.longueurBatteur / 2, 0)
+        .setTranslation(longueur / 2, 0)
         .setRotation(-Math.PI / 2)
         .setRestitution(r.restitutionBatteur)
         .setFriction(r.frottement),
