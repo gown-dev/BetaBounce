@@ -12,6 +12,7 @@ import {
   type Reglages,
 } from './src/socle.ts';
 import { creerMonde } from './src/monde.ts';
+import { creerEtat, rearmerKickback, appliquer } from './src/mecanismes.ts';
 import { VARIANTS } from './src/variants.ts';
 
 await RAPIER.init();
@@ -44,6 +45,8 @@ function jouer(r: Reglages, battre: boolean): Resultat {
     { gauche: a.gaucheRepos, droit: a.droitRepos },
   );
 
+  const etat = creerEtat(socle);
+  rearmerKickback(etat);
   balle.applyImpulse({ x: 0, y: impulsionLanceur(r, socle, 0.5) }, true); // mi-course
 
   let angleG = a.gaucheRepos;
@@ -75,6 +78,7 @@ function jouer(r: Reglages, battre: boolean): Resultat {
     }
 
     monde.step();
+    appliquer(r, socle, balle, etat, PAS);
     livrer(socle, balle);
     t += PAS;
 

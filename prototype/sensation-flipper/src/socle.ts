@@ -34,6 +34,13 @@ export type Reglages = {
   poteauCentral: boolean;
   garnissage: boolean; // quelques bumpers, pour que la balle ait quelque chose à faire
   restitutionBumper: number;
+
+  // De quoi rendre la zone basse vivante. Un slingshot passif n'est qu'un mur, et un
+  // couloir de sortie sans rattrapage n'est qu'un entonnoir à drain.
+  slingshotsActifs: boolean;
+  forceSlingshot: number; // gain de vitesse à la frappe, en m/s
+  kickback: boolean;
+  forceKickback: number; // vitesse de renvoi, en m/s
 };
 
 export const LARGEUR = 0.52;
@@ -46,6 +53,10 @@ export type Socle = {
   murs: Polyligne[];
   poteaux: { x: number; y: number; r: number }[];
   bumpers: { x: number; y: number; r: number }[];
+  // Face frappante d'un slingshot : le segment, et la normale qui pointe vers le jeu.
+  facesSling: { a: [number, number]; b: [number, number]; normale: [number, number] }[];
+  // Couloirs de sortie, pour le kickback : la tranche en x, et la hauteur de déclenchement.
+  couloirs: { xMin: number; xMax: number; y: number }[];
   pivotGauche: [number, number];
   pivotDroit: [number, number];
   departBalle: [number, number];
@@ -90,6 +101,8 @@ export function construireSocle(r: Reglages): Socle {
   const murs: Polyligne[] = [contour];
   const poteaux: Socle['poteaux'] = [];
   const bumpers: Socle['bumpers'] = [];
+  const facesSling: Socle['facesSling'] = [];
+  const couloirs: Socle['couloirs'] = [];
 
   const miroir = (p: Polyligne): Polyligne => p.map(([x, y]) => [2 * cx - x, y]);
 
@@ -114,6 +127,23 @@ export function construireSocle(r: Reglages): Socle {
       [sommetPoteau[0] + bouche * 0.45, sommetPoteau[1] + bouche * 1.2],
     ];
     murs.push(poteau, miroir(poteau), sling, miroir(sling));
+
+    // La face frappante est celle qui regarde le jeu : le segment sommet → bas, dont la
+    // normale s'éloigne du troisième point du triangle.
+    for (const t of [sling, miroir(sling)]) {
+      const [coin, haut, bas] = t;
+      const dir = [bas[0] - haut[0], bas[1] - haut[1]];
+      const n = Math.hypot(dir[0], dir[1]) || 1;
+      let normale: [number, number] = [-dir[1] / n, dir[0] / n];
+      const versCoin = (coin[0] - haut[0]) * normale[0] + (coin[1] - haut[1]) * normale[1];
+      if (versCoin > 0) normale = [-normale[0], -normale[1]];
+      facesSling.push({ a: haut, b: bas, normale });
+    }
+
+    couloirs.push(
+      { xMin: xL, xMax: xL + r.largeurCouloir, y: 0.09 },
+      { xMin: 2 * cx - xL - r.largeurCouloir, xMax: 2 * cx - xL, y: 0.09 },
+    );
   } else {
     // Pas de couloir de sortie : les murs plongent en diagonale sur les batteurs.
     const rampe: Polyligne = [
@@ -145,6 +175,8 @@ export function construireSocle(r: Reglages): Socle {
     murs,
     poteaux,
     bumpers,
+    facesSling,
+    couloirs,
     pivotGauche,
     pivotDroit,
     departBalle: [LARGEUR - LARGEUR_LANCEUR / 2, 0.032],

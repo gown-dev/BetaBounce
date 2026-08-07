@@ -23,8 +23,9 @@ const base: Reglages = {
   angleHautDeg: 28,
   vitesseBatteur: 34,
 
-  margeEpaisseur: 0.004,
-  margeLongueur: 0.008,
+  // Valeurs retenues par le dev après essai : « ça m'a semblé pas mal ».
+  margeEpaisseur: 0.003,
+  margeLongueur: 0.01,
 
   largeurCouloir: 0.048,
   hauteurPoteau: 0.26,
@@ -32,6 +33,11 @@ const base: Reglages = {
   poteauCentral: false,
   garnissage: true,
   restitutionBumper: 0.8,
+
+  slingshotsActifs: true,
+  forceSlingshot: 2.2,
+  kickback: true,
+  forceKickback: 1.8,
 };
 
 export type Variant = { cle: string; nom: string; resume: string; reglages: Reglages };

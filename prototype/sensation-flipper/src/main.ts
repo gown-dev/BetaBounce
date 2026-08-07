@@ -25,6 +25,12 @@ import {
   type Socle,
 } from './socle.ts';
 import { creerMonde } from './monde.ts';
+import {
+  creerEtat,
+  rearmerKickback,
+  appliquer as appliquerMecanismes,
+  type EtatMecanismes,
+} from './mecanismes.ts';
 import { VARIANTS } from './variants.ts';
 
 await RAPIER.init();
@@ -49,6 +55,7 @@ let monde: any;
 let balle: any;
 let batteurG: any;
 let batteurD: any;
+let mecanismes: EtatMecanismes;
 
 const batteurs = {
   gauche: { angle: 0, cible: 0, repos: 0, haut: 0 },
@@ -92,6 +99,11 @@ function construireMonde(pos?: { x: number; y: number }, vel?: { x: number; y: n
   balle = m.balle;
   batteurG = m.batteurG;
   batteurD = m.batteurD;
+  // Le kickback survit à une reconstruction en cours de balle : on ne rend pas un
+  // rattrapage déjà consommé parce qu'on a bougé un curseur.
+  const dispo = mecanismes?.kickbackDispo ?? true;
+  mecanismes = creerEtat(socle);
+  mecanismes.kickbackDispo = dispo;
   trainee.length = 0;
 }
 
@@ -101,6 +113,7 @@ function rejouer() {
   chronoBalle = 0;
   enJeu = false;
   construireMonde();
+  rearmerKickback(mecanismes);
 }
 
 function balleSuivante() {
@@ -112,6 +125,7 @@ function balleSuivante() {
   balle.setTranslation({ x: socle.departBalle[0], y: socle.departBalle[1] }, true);
   balle.setLinvel({ x: 0, y: 0 }, true);
   balle.setAngvel(0, true);
+  rearmerKickback(mecanismes);
   trainee.length = 0;
 }
 
@@ -196,6 +210,7 @@ function avancer(pas: number) {
   }
 
   monde.step();
+  appliquerMecanismes(reglages, socle, balle, mecanismes, pas);
   if (livrer(socle, balle)) enJeu = true;
 
   const p = balle.translation();
@@ -281,6 +296,24 @@ function dessiner() {
     ctx.strokeStyle = '#4d6b86';
     ctx.lineWidth = 2;
     ctx.stroke();
+  }
+
+  // Les pièces qui poussent doivent se distinguer des murs qui subissent.
+  if (reglages.slingshotsActifs && reglages.forceSlingshot > 0) {
+    ctx.strokeStyle = '#c05a4a';
+    ctx.lineWidth = 4;
+    for (const f of socle.facesSling) {
+      ctx.beginPath();
+      ctx.moveTo(X(f.a[0]), Y(f.a[1]));
+      ctx.lineTo(X(f.b[0]), Y(f.b[1]));
+      ctx.stroke();
+    }
+  }
+  if (reglages.kickback && reglages.forceKickback > 0) {
+    ctx.fillStyle = mecanismes.kickbackDispo ? 'rgba(192,90,74,.35)' : 'rgba(80,88,100,.18)';
+    for (const c of socle.couloirs) {
+      ctx.fillRect(X(c.xMin), Y(c.y), (c.xMax - c.xMin) * echelle, c.y * echelle);
+    }
   }
 
   dessinerBatteur(socle.pivotGauche, batteurs.gauche.angle);
@@ -427,11 +460,15 @@ const CURSEURS: Curseur[] = [
   { cle: 'margeLongueur', nom: 'Indulgence — après la pointe', min: 0, max: 0.035, pas: 0.0005, fmt: mm },
   { cle: 'largeurCouloir', nom: 'Largeur du couloir de sortie', min: 0.018, max: 0.08, pas: 0.001, fmt: mm },
   { cle: 'restitutionBumper', nom: 'Restitution des bumpers', min: 0.3, max: 0.95, pas: 0.01, fmt: brut },
+  { cle: 'forceSlingshot', nom: 'Frappe des slingshots', min: 0, max: 4, pas: 0.05, fmt: (v) => `${brut(v)} m/s` },
+  { cle: 'forceKickback', nom: 'Renvoi du kickback', min: 0, max: 3.5, pas: 0.05, fmt: (v) => `${brut(v)} m/s` },
 ];
 
 const BASCULES: { cle: keyof Reglages; nom: string }[] = [
   { cle: 'garnissage', nom: 'Bumpers' },
   { cle: 'slingshots', nom: 'Slingshots et couloirs' },
+  { cle: 'slingshotsActifs', nom: 'Slingshots actifs (ils frappent)' },
+  { cle: 'kickback', nom: 'Kickback (un par balle)' },
   { cle: 'poteauCentral', nom: 'Poteau central' },
 ];
 
