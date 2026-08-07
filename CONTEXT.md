@@ -109,6 +109,13 @@ _Éviter_ : clé, capacité, pouvoir
 **shared** :
 Le paquet qui porte le cœur de simulation. Ne connaît ni Phaser ni le DOM, et tourne à l'identique dans le navigateur et sous Node.
 
+**enregistrement** :
+Ce que le client dépose à la fin d'une partie : la case visitée, l'arme équipée, les entrées horodatées du joueur, la version du moteur physique, et le score prédit. Il suffit à rejouer la partie à l'identique. Conservé après le rejeu.
+_Éviter_ : replay, trace, log
+
+**score prédit** :
+Le score que le client calcule pendant la partie. Sans autorité, et branché sur rien : le rejeu ne le lit pas, il le compare. Il sert à l'affichage, et de témoin — un écart avec le score du rejeu ne rapporte rien au joueur, il signale que le déterminisme a cassé, ou qu'un client a menti sans y gagner.
+
 **rejeu** :
-La ré-exécution serveur d'une partie à partir des entrées transmises par le client, pour valider le score annoncé.
+La ré-exécution serveur d'une partie à partir de son enregistrement. Le score qu'il produit fait foi. Seule porte d'entrée de valeur dans le compte d'un joueur, avec les quêtes.
 _Éviter_ : replay, validation
