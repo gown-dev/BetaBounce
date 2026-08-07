@@ -15,7 +15,7 @@ Le monde du jeu, propre à chaque joueur, découpé en secteurs et parcouru depu
 Une région du donjon, ouverte par une quête.
 
 **case** :
-Une position du donjon. S'y déplacer exige de gagner une partie. La case décide des modules posés sur son plateau — c'est son identité et sa difficulté.
+Une position du donjon. S'y déplacer exige de gagner une partie. La case choisit un plan et le garnit de modules — c'est son identité et sa difficulté.
 _Éviter_ : niveau, carte
 
 **quête** :
@@ -26,16 +26,42 @@ La source unique de progression. Une quête accorde une bénédiction, un sceau,
 **partie** :
 Une tentative de déplacement vers une case, jouée au flipper avec un nombre de balles fixé.
 
+**plan** :
+Un dessin de plateau réutilisable : une grille de tuiles, un contour, des emplacements. Les plans forment une bibliothèque qui s'étoffe ; une case en choisit un, puis le garnit.
+
+**tuile** :
+Une cellule de la grille d'un plan, portant un fragment de géométrie pris dans un jeu fini.
+
+**socle** :
+La zone basse, identique sur tous les plans et tracée hors grille : batteurs, drain, couloirs de sortie, lanceur.
+_Éviter_ : coquille
+
 **plateau** :
-Le rectangle de jeu, de taille fixe, percé d'emplacements prédéfinis.
+Le terrain de jeu effectif d'une partie : un plan garni par une case, posé sur le socle.
 _Éviter_ : table, niveau
 
 **emplacement** :
-Une position du plateau où un module peut se greffer.
+Un rectangle de cellules qu'un plan réserve pour accueillir un module. Un module y tient ou n'y tient pas ; rien d'autre ne conditionne la pose. Les emplacements par où la balle entre et sort portent en plus un rôle, car la géométrie ne le dit pas.
 
 **module** :
-Une pièce de plateau, posée par la case sur un emplacement. Un module émet un effet temporaire quand on le sollicite.
+Une pièce de plateau, posée par la case sur un emplacement. Figé : son empreinte, ses récepteurs, sa condition d'activation et son effet appartiennent à son identité. Les variantes sont des modules distincts.
 _Éviter_ : élément, obstacle
+
+**récepteur** :
+Une partie sollicitable d'un module. Un récepteur se sollicite par impact — la balle rebondit — ou par passage — elle traverse.
+_Éviter_ : organe, interface
+
+**résistance** :
+Le nombre de sollicitations qu'un récepteur encaisse avant de devenir inerte. Un bumper a une résistance infinie, un bouton une résistance de un.
+
+**inerte** :
+L'état d'un récepteur dont la résistance est épuisée. Levé au réarmement.
+
+**activation** :
+La condition, portant sur l'état des récepteurs d'un module, qui fait émettre son effet et réarme tous ses récepteurs d'un coup.
+
+**effet** :
+Une modification d'ampleur et de durée fixées, portant sur l'une des quatre grandeurs d'une partie : le score, la physique de la balle, le cadre de la partie, l'état du plateau. Un effet est déclaré, jamais calculé. Il vient de l'activation d'un module, ou de l'arme équipée — auquel cas il dure toute la partie.
 
 **batteur** :
 La palette qui renvoie la balle. Deux par plateau, de géométrie identique sur toutes les cases et pour tous les joueurs.
@@ -46,7 +72,7 @@ Le projectile. Porteuse des sceaux du joueur.
 _Éviter_ : bille
 
 **barrière** :
-L'exigence portée par un module : nécrotique, de ténèbres. Un module barricadé n'encaisse aucun dégât tant que la balle ne porte pas le sceau correspondant.
+L'exigence portée par un récepteur : nécrotique, de ténèbres. Un récepteur barricadé n'encaisse aucune sollicitation tant que la balle ne porte pas le sceau correspondant. Réservée aux récepteurs sollicités par impact.
 _Éviter_ : protection, défense
 
 ### Le joueur
@@ -75,7 +101,7 @@ Faire monter une arme d'un cran de qualité. Débloqué par quête.
 L'état d'une amélioration temporairement suspendue par une quête. Un état, jamais une perte.
 
 **sceau** :
-La capacité permanente de la balle à endommager un module malgré sa barrière. Un sceau franchit la barrière de même nom. Global, indépendant de l'arme équipée.
+La capacité permanente de la balle à solliciter un récepteur malgré sa barrière. Un sceau franchit la barrière de même nom. Global, indépendant de l'arme équipée.
 _Éviter_ : clé, capacité, pouvoir
 
 ### L'architecture
