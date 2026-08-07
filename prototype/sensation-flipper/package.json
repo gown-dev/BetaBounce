@@ -1,0 +1,16 @@
+{
+  "name": "prototype-sensation-flipper",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "verif": "node verif-a-blanc.ts"
+  },
+  "dependencies": {
+    "@dimforge/rapier2d-deterministic-compat": "0.19.3"
+  },
+  "devDependencies": {
+    "typescript": "^5.9.0",
+    "vite": "^8.2.1"
+  }
+}
