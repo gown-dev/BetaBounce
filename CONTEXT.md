@@ -19,12 +19,30 @@ Une position du donjon. S'y déplacer exige de gagner une partie. La case choisi
 _Éviter_ : niveau, carte
 
 **quête** :
-La source unique de progression. Une quête accorde une bénédiction, un sceau, ou l'amélioration d'une arme.
+La source unique de progression. Une quête accorde une bénédiction, un sceau, l'amélioration d'une arme, ou une exploration de plus par jour.
+
+**service** :
+Ce qu'une case révèle en plus de son plateau, une fois explorée : un marchand, un portail. Une seule par case, pour que la carte reste lisible. On en use gratuitement et autant qu'on veut, tant que le héros se tient sur la case.
+
+**marchand** :
+Un service qui vend contre de la monnaie : des consommables, et les identités d'armes qui lui sont propres. Se découvre en explorant sa case.
+_Éviter_ : boutique, vendeur, échoppe
 
 ### La partie
 
+**exploration** :
+Une tentative de déplacement vers une case. Le héros en dispose d'un nombre limité par jour. Deux réserves distinctes : le **quota du jour**, qui se remet à son plein chaque jour et dont le reliquat expire, et les **explorations bonus** achetées, qui s'accumulent sans limite. Elle se consomme qu'elle réussisse ou non, et même sur une case déjà validée — auquel cas seuls les paliers encore non versés peuvent rapporter.
+_Éviter_ : tentative, déplacement, essai
+
 **partie** :
-Une tentative de déplacement vers une case, jouée au flipper avec un nombre de balles fixé.
+La partie de flipper qui résout une exploration, jouée avec un nombre de balles fixé. Une exploration, une partie — jamais deux.
+
+**palier** :
+Un score à atteindre, propre à une case. Une case en porte cinq, croissants. Franchir un palier verse sa récompense — une seule fois dans la vie de la case, jamais deux. Les paliers restants se gagnent en y revenant, au prix d'une exploration.
+_Éviter_ : seuil, niveau, cap
+
+**conquête** :
+Le franchissement du palier qui vaut victoire — un palier intermédiaire, pas le dernier. Il valide le déplacement vers la case. La partie continue au-delà, pour les paliers suivants.
 
 **plan** :
 Un dessin de plateau réutilisable : une grille de tuiles, un contour, des emplacements. Les plans forment une bibliothèque qui s'étoffe ; une case en choisit un, puis le garnit.
@@ -91,7 +109,7 @@ Un effet permanent du héros sur le cadre de la partie — balles supplémentair
 _Éviter_ : talent, don, bonus, amélioration
 
 **arme** :
-L'objet équipé qui produit les effets de plateau. Une seule équipée à la fois, choisie avant la partie. Entièrement décrite par son identité et sa qualité.
+L'objet équipé qui produit les effets de plateau. Une seule équipée à la fois, choisie avant la partie. Entièrement décrite par son identité et sa qualité. L'identité s'achète chez le marchand qui la vend ; la qualité ne monte que par quête.
 _Éviter_ : équipement, objet
 
 **qualité** :
@@ -107,6 +125,13 @@ L'état d'une amélioration temporairement suspendue par une quête. Un état, j
 **sceau** :
 La capacité permanente de la balle à solliciter un récepteur malgré sa barrière. Un sceau franchit la barrière de même nom. Global, indépendant de l'arme équipée.
 _Éviter_ : clé, capacité, pouvoir
+
+**monnaie** :
+Ce que versent les paliers, et la seule chose qu'ils versent. Ne s'achète pas, ne se perd pas, ne se retire pas. Ne se dépense que chez un marchand.
+
+**consommable** :
+Un effet à usage unique porté par le héros, acheté chez un marchand et gardé en réserve. Frère de la bénédiction — même porteur, mais il se dépense au lieu de valoir toujours. Agit sur le cadre de la partie ou sur le donjon, jamais sur le plateau : il achète du temps, jamais de la puissance.
+_Éviter_ : objet, potion, item
 
 ### L'architecture
 
