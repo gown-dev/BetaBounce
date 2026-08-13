@@ -12,7 +12,8 @@ Ce fichier est un glossaire, rien d'autre. Les décisions et leur justification 
 Le monde du jeu, propre à chaque joueur, découpé en secteurs et parcouru depuis un escalier central.
 
 **secteur** :
-Une région du donjon, ouverte par une quête.
+Un bloc de cases voisines sur la carte unique du donjon, avec son thème et sa difficulté propres.
+Un secteur n'est jamais fermé : on peut s'y rendre à tout moment. Il est seulement ingrat tant que le héros ne porte pas les **sceaux** qu'exigent ses **barrières** — on y joue, on y marque très peu. Ce qu'on appelle « ouvrir un secteur » est donc la conséquence d'un sceau gagné, jamais une récompense en soi.
 
 **case** :
 Une position du donjon. S'y déplacer exige de gagner une partie. La case choisit un plan et le garnit de modules — c'est son identité et sa difficulté.
@@ -20,9 +21,22 @@ _Éviter_ : niveau, carte
 
 **quête** :
 La source unique de progression. Une quête accorde une bénédiction, un sceau, l'amélioration d'une arme, ou une exploration de plus par jour.
+Une quête est un **service** : elle est ancrée sur une case, révélée en l'explorant, et reste consultable sur place — on y revient pour en revoir l'objectif. Une case n'en porte qu'une, et ne se recharge pas.
+Elle ne s'accepte pas et ne se dépense pas : elle observe ce que fait le héros et avance seule. Toutes les quêtes trouvées courent donc en parallèle, sans arbitrage entre elles.
+Ce qui l'incarne — un héraut, un autel, une statue gravée — est un habillage. Le modèle ne connaît que la quête.
+Une quête est faite d'une ou plusieurs **étapes**, sans limite de nombre. Elle verse une **récompense**, et une seule.
+
+**étape** :
+Une condition à franchir dans une quête. Les étapes se choisissent dans une grammaire **fermée** : se rendre sur une case, conquérir une case, obtenir un nombre donné d'**objets de quête**, atteindre un palier donné sur une case. Une quête est donc une donnée, pas du code. La liste s'allonge par décision, jamais par dérive.
+Les étapes se franchissent dans l'ordre écrit, une à la fois. Une étape ne compte que ce qui arrive pendant qu'elle est **en cours** : elle lit des événements, jamais l'état acquis avant elle. C'est ce qui fait de la quête le dispositif qui dirige le joueur dans un donjon sans limites.
+Une étape désigne toujours la case où elle se franchit, et la carte la marque. Le joueur n'a jamais à chercher où aller.
+
+**objet de quête** :
+Un objet que le héros transporte pour franchir une étape, et qui n'a aucun effet. Il ne s'obtient **que** pendant l'étape qui le réclame : hors d'elle, il n'existe pas et ne tombe jamais. Obtenu en explorant, parfois au hasard, et comptable. Il se dépense, se détruit et se perd — la permanence ne le concerne pas.
+_Éviter_ : relique, consommable, butin
 
 **service** :
-Ce qu'une case révèle en plus de son plateau, une fois explorée : un marchand, un portail. Une seule par case, pour que la carte reste lisible. On en use gratuitement et autant qu'on veut, tant que le héros se tient sur la case.
+Ce qu'une case révèle en plus de son plateau, une fois explorée : un marchand, un portail, une quête. Une seule par case, pour que la carte reste lisible. On en use gratuitement et autant qu'on veut, tant que le héros se tient sur la case.
 
 **marchand** :
 Un service qui vend contre de la monnaie : des consommables, et les identités d'armes qui lui sont propres. Se découvre en explorant sa case.
@@ -99,7 +113,11 @@ _Éviter_ : protection, défense
 
 ### Le joueur
 
-Trois porteurs, distingués par ce sur quoi l'effet agit. Ce qui existe encore sans plateau va au héros ; ce qui a besoin du plateau va à l'arme ; ce qui décide si une cible encaisse va à la balle. Tout est permanent : rien ne se perd, rien ne se retire.
+Trois porteurs, distingués par ce sur quoi l'effet agit. Ce qui existe encore sans plateau va au héros ; ce qui a besoin du plateau va à l'arme ; ce qui décide si une cible encaisse va à la balle.
+
+**récompense** :
+Ce qu'une quête verse : une bénédiction, un sceau, un cran de qualité d'arme, une exploration de plus par jour. Une récompense est permanente : une fois gagnée, elle est acquise pour toujours. Elle ne se perd pas et ne se dépense pas. Une quête peut seulement la rendre **inactive** le temps qu'elle dure — l'acquis, lui, demeure. C'est la permanence qui la définit, et elle ne s'étend à rien d'autre : l'**objet de quête** et le **consommable** se dépensent, la **monnaie** aussi.
+Les récompenses forment un catalogue **fermé**, écrit d'avance et identique pour tous les joueurs. Le joueur connaît donc dès le départ ce qui lui reste à obtenir.
 
 **héros** :
 Le personnage persistant que le joueur incarne. Jamais visible pendant la partie. Propriétaire de tout.
@@ -120,7 +138,8 @@ _Éviter_ : niveau, rang, palier
 Faire monter une arme d'un cran de qualité. Débloqué par quête.
 
 **inactive** :
-L'état d'une amélioration temporairement suspendue par une quête. Un état, jamais une perte.
+L'état d'une **récompense** suspendue par une quête. Toute récompense peut l'être, sceaux compris. Elle reste acquise et cesse seulement de produire son effet, jusqu'à ce que la quête s'achève — après quoi elle revient intacte. Un état, jamais une perte.
+La suspension est elle-même un ressort de quête : un gobelin dérobe le bâton du héros, la quête est la poursuite, et rattraper le voleur rend le bâton. Elle ne coûte aucune entrée du catalogue, puisque rien de neuf n'est versé.
 
 **sceau** :
 La capacité permanente de la balle à solliciter un récepteur malgré sa barrière. Un sceau franchit la barrière de même nom. Global, indépendant de l'arme équipée.
