@@ -156,6 +156,19 @@ _Éviter_ : objet, potion, item
 
 **shared** :
 Le paquet qui porte le cœur de simulation. Ne connaît ni Phaser ni le DOM, et tourne à l'identique dans le navigateur et sous Node.
+Il contient exactement ce que le rejeu exécute, et rien d'autre — même ce dont les deux côtés se servent reste dehors s'il n'est pas nécessaire au rejeu.
+
+**server** :
+Le paquet qui porte le domaine persistant : donjon, cases, quêtes, économie, marchands, comptes. Seul possédant du plateau, qu'il résout et transmet. C'est lui qui rejoue.
+
+**client** :
+Le paquet qui porte la SPA et le rendu. Ne construit jamais un plateau : il en reçoit un et l'exécute dans **shared**.
+
+**contracts** :
+Le paquet des types d'échange entre **server** et **client** qui ne concernent pas le rejeu. Déclarations pures, sans dépendance et sans code exécutable. Il existe pour que rien n'entre dans **shared** au seul motif d'être partagé.
+
+**partie en cours** :
+Ce que le serveur ouvre en débitant l'exploration : la case, le plateau résolu, l'arme équipée. Elle attend son enregistrement, et n'en accepte qu'un. Fermer la page ne l'annule pas — l'exploration est déjà dépensée.
 
 **enregistrement** :
 Ce que le client dépose à la fin d'une partie : la case visitée, l'arme équipée, les entrées horodatées du joueur, la version du moteur physique, et le score prédit. Il suffit à rejouer la partie à l'identique. Conservé après le rejeu.
