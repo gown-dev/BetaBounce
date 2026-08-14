@@ -9,7 +9,8 @@ Ce fichier est un glossaire, rien d'autre. Les décisions et leur justification 
 ### Le donjon
 
 **donjon** :
-Le monde du jeu, propre à chaque joueur, découpé en secteurs et parcouru depuis un escalier central.
+Le monde du jeu : une carte unique, découpée en secteurs et parcourue depuis un escalier central.
+La carte est **commune à tous les joueurs** — mêmes cases, mêmes quêtes ancrées, mêmes marchands. Ce qui est propre à chaque joueur, c'est sa **progression** dessus.
 
 **secteur** :
 Un bloc de cases voisines sur la carte unique du donjon, avec son thème et sa difficulté propres.
@@ -50,6 +51,7 @@ _Éviter_ : tentative, déplacement, essai
 
 **partie** :
 La partie de flipper qui résout une exploration, jouée avec un nombre de balles fixé. Une exploration, une partie — jamais deux.
+Une partie persiste, et traverse deux états. **En cours** : ouverte par le serveur, elle attend son enregistrement. **Close** : l'enregistrement est déposé et rejoué, le score est acquis. Elle garde ensuite son enregistrement, et le témoignage d'une éventuelle divergence.
 
 **palier** :
 Un score à atteindre, propre à une case. Une case en porte cinq, croissants. Franchir un palier verse sa récompense — une seule fois dans la vie de la case, jamais deux. Les paliers restants se gagnent en y revenant, au prix d'une exploration.
@@ -122,6 +124,15 @@ Les récompenses forment un catalogue **fermé**, écrit d'avance et identique p
 **héros** :
 Le personnage persistant que le joueur incarne. Jamais visible pendant la partie. Propriétaire de tout.
 
+**journal** :
+Le registre de ce qui est arrivé au héros : la suite ordonnée et datée de ses **événements**. Il fait foi — tout ce que le héros possède y a sa cause. Ce qu'il affiche par ailleurs (sa monnaie, ses explorations restantes, son inventaire) n'en est que le résumé.
+
+**événement** :
+Un fait inscrit au journal, daté et causé, qui ne se réécrit jamais. Monnaie versée par un palier, monnaie dépensée chez un marchand, récompense acquise, objet de quête ramassé, exploration débitée.
+Un événement concerne toujours le **héros**, jamais le plateau : ce qui se produit pendant une partie a ses propres mots — **sollicitation**, **activation**, **effet**.
+Une **étape** de quête ne lit que les événements survenus pendant qu'elle est en cours.
+_Éviter_ : écriture, mouvement, opération, versement
+
 **bénédiction** :
 Un effet permanent du héros sur le cadre de la partie — balles supplémentaires, relance d'urgence. Indépendant de l'arme équipée.
 _Éviter_ : talent, don, bonus, amélioration
@@ -168,7 +179,9 @@ Le paquet qui porte la SPA et le rendu. Ne construit jamais un plateau : il en r
 Le paquet des types d'échange entre **server** et **client** qui ne concernent pas le rejeu. Déclarations pures, sans dépendance et sans code exécutable. Il existe pour que rien n'entre dans **shared** au seul motif d'être partagé.
 
 **partie en cours** :
-Ce que le serveur ouvre en débitant l'exploration : la case, le plateau résolu, l'arme équipée. Elle attend son enregistrement, et n'en accepte qu'un. Fermer la page ne l'annule pas — l'exploration est déjà dépensée.
+L'état d'une **partie** que le serveur a ouverte en débitant l'exploration, et qui n'a pas encore été rejouée : la case, l'arme équipée, l'heure d'ouverture. Elle n'accepte qu'un enregistrement, une seule fois.
+Le plateau n'y est pas conservé : sans aléa, il se re-résout à l'identique depuis la case.
+Fermer la page ne l'annule pas — l'exploration est déjà dépensée.
 
 **enregistrement** :
 Ce que le client dépose à la fin d'une partie : la case visitée, l'arme équipée, les entrées horodatées du joueur, la version du moteur physique, et le score prédit. Il suffit à rejouer la partie à l'identique. Conservé après le rejeu.
